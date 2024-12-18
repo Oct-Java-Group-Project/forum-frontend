@@ -6,25 +6,51 @@ import './form.css';
 function Register(){
     const [username, setusername] = useState('');
     const [password, setpassword] = useState('');
-
     const [firstname,setfirstname]=useState('');
     const [lastname,setlastname]=useState('');
     const [email,setemail]=useState('');
+    const [error, setError] = useState('');
 
     const navigate = useNavigate();
-    const register = (e) => {
-        //api call
+
+    const register = async (e) => {
         e.preventDefault();
-        if (username === 'win' && password === 'letmein') {
-            navigate('/home');
-        } else {
-            alert('invalid credentials');
+        try {
+            // API call to register a new user
+            const response = await fetch("http://localhost:8080/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    username,
+                    password,
+                    firstName: firstname,
+                    lastName: lastname,
+                    email,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Registration failed");
+            }
+
+            const data = await response.json();
+            console.log("Registration Successful:", data);
+
+            // Navigate to the home page or login page after successful registration
+            navigate('/login');
+        } catch (err) {
+            console.error("Registration error:", err.message);
+            setError(err.message); // Display error message to the user
         }
     };
     return (
         <div className="formcontainer">
             <form onSubmit={register} className="card">
                 <h3>Register</h3>
+                {error && <div style={{ color: "red" }}>{error}</div>}
                 <div>
                     <label htmlFor="username">Username</label>
                     <input type="text" id="username" value={username} onChange={(e) => setusername(e.target.value)} required />

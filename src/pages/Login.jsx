@@ -11,16 +11,41 @@ function Login() {
 
     const { login } = useAuth();
     const [credentials, setcredentials] = useState({ username: '', password: '', });
-    const onLogin = (e) => {
-        e.preventDefault();
-        login(credentials);
-        navigate('/home');
+    const [error, setError] = useState('');
 
-    }
+    const onLogin = async (e) => {
+        e.preventDefault();
+        try {
+            // API call to verify user credentials via API Gateway
+            const response = await fetch("http://localhost:8080/api/auth/login", { // Replace with the Gateway endpoint
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(credentials),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Invalid username or password");
+            }
+
+            const data = await response.json();
+            console.log("API Response:", data);
+
+            // Proceed with login logic if API call is successful
+            login(data); // Pass the API response to the login context
+            navigate('/home');
+        } catch (err) {
+            console.error("Login error:", err.message);
+            setError(err.message);
+        }
+    };
     return (
         <div className="formcontainer">
             <form onSubmit={onLogin} className="card">
                 <h3>Login</h3>
+                {error && <div style={{ color: "red" }}>{error}</div>}
                 <div>
                     <label htmlFor="username">Username</label>
                     <input type="text" value={credentials.username} onChange={(e)=>setcredentials({...credentials,username:e.target.value})} required />
