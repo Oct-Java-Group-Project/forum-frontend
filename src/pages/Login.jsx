@@ -17,7 +17,7 @@ function Login() {
         e.preventDefault();
         try {
             // API call to verify user credentials via API Gateway
-            const response = await fetch("http://localhost:8080/api/auth/login", { // Replace with the Gateway endpoint
+            const response = await fetch("http://localhost:8080/auth/login", { // Replace with the Gateway endpoint
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -17,7 +17,7 @@ function Register(){
         e.preventDefault();
         try {
             // API call to register a new user
-            const response = await fetch("http://localhost:8080/register", {
+            const response = await fetch("http://localhost:8080/auth/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -43,7 +43,7 @@ function Register(){
             navigate('/login');
         } catch (err) {
             console.error("Registration error:", err.message);
-            setError(err.message); // Display error message to the user
+            setError(err.message);
         }
     };
     return (
