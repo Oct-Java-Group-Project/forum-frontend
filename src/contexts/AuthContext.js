@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
                 const token = res.data.token;
                 localStorage.setItem('token', token);
                 const email = credentials.email;
-                const userres = await axios.post(`http://localhost:8081/users/email?email=${email}`, {
+                const userres = await axios.get(`http://localhost:8080/users/email?email=${email}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -70,6 +70,7 @@ export const AuthProvider = ({ children }) => {
                             profileimg: userdata.profileImageUrl,
                         }
                     });
+                    console.log(userdata);
                 }
             }
         } catch (err) {

@@ -19,11 +19,15 @@ function Home() {
     useEffect(()=>{
         const getPosts=async()=>{
             const {data,admindata,deleteddata}=await fetchPosts();
-            setdata(data);
-            setadmindata(admindata);
-            setdeleteddata(deleteddata);
+            // setdata(data);
+            // setadmindata(admindata);
+            // setdeleteddata(deleteddata);
+            setdata(data.map(row => row.map(String)));
+            setadmindata(admindata.map(row => row.map(String)));
+            setdeleteddata(deleteddata.map(row =>row.map(String)))
         };
         getPosts();
+        console.log(authstate.user.firstname);
     },[]);
     // for admin home page: all and list of deleted posts
     const setTabData = () => {

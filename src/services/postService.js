@@ -2,27 +2,36 @@
 
 import axios from "axios";
 
-const URL='http://localhost:8082/posts';
+const URL='http://localhost:8080/posts';
 export const fetchPosts = async () => {
     try {
-        const res = await axios.get('http://localhost:8082/posts');
-        const deletedres=await axios.get('http://localhost:8082/posts/accessibility/deleted');
+        console.log("enter axios get");
+        const res = await axios.get('http://localhost:8080/posts');
+        console.log("pass axios get");
+        const deletedres=await axios.get('http://localhost:8080/posts/accessibility/deleted');
+        console.log("pass axios get delete");
         // if (res.data.success) {
         const posts = res.data.success?res.data.data:_data;
         const deletedposts=deletedres.data.success?deletedres.data.data:_deleteddata;
         
         // id, title, author, date
-        const data = posts.map((post) => [
-            post.postId, post.title, post.userId, new Date(post.metadata.createdAt).toLocaleDateString(),
-        ]);
+        // const data = posts.map((post) => [
+        //     post.postId, post.title, post.userId, new Date(post.metadata.createdAt).toLocaleDateString(),
+        // ]);
+        const data = posts.map((post) => [ post.post.postId, post.post.title, post.post.userId, post.post.metadata && post.post.metadata.createdAt ? new Date(post.post.metadata.createdAt).toLocaleDateString() : 'N/A', ])
+        console.log(data);
         // id, title, author, date, status
-        const admindata = posts.map((post) => [
-            post.postId, post.title, post.userId, new Date(post.metadata.createdAt).toLocaleDateString(), post.accessibility === 'PUBLISHED' ? 'Active' : 'Inactive',
-        ]);
+        // const admindata = posts.map((post) => [
+        //     post.postId, post.title, post.userId, new Date(post.metadata.createdAt).toLocaleDateString(), post.accessibility === 'PUBLISHED' ? 'Active' : 'Inactive',
+        // ]);
+        const admindata = posts.map((post) => [ post.post.postId, post.post.title, post.post.userId, post.post.metadata && post.post.metadata.createdAt ? new Date(post.post.metadata.createdAt).toLocaleDateString() : 'N/A',
+            post.accessibility === 'PUBLISHED' ? 'Active' : 'Inactive', ]);
         // id,title,author,date
+        // No nested post for this API call
         const deleteddata = deletedposts.map((post) => [
             post.postId, post.title, post.userId, new Date(post.metadata.createdAt).toLocaleDateString(),
         ])
+
         return { data, admindata ,deleteddata};
         // }
         // return { data: _data, admindata: _admindata };
