@@ -4,7 +4,6 @@ import './form.css';
 
 
 function Register(){
-    const [username, setusername] = useState('');
     const [password, setpassword] = useState('');
     const [firstname,setfirstname]=useState('');
     const [lastname,setlastname]=useState('');
@@ -23,7 +22,6 @@ function Register(){
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    username,
                     password,
                     firstName: firstname,
                     lastName: lastname,
@@ -38,7 +36,6 @@ function Register(){
 
             const data = await response.json();
             console.log("Registration Successful:", data);
-
             // Navigate to the home page or login page after successful registration
             navigate('/login');
         } catch (err) {

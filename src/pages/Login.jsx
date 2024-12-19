@@ -8,8 +8,7 @@ function Login() {
     // const [username, setusername] = useState('');
     // const [password, setpassword] = useState('');
     const navigate = useNavigate();
-
-    const { login } = useAuth();
+    const { authstate, login } = useAuth();
     const [credentials, setcredentials] = useState({ username: '', password: '', });
     const [error, setError] = useState('');
 
@@ -35,6 +34,7 @@ function Login() {
 
             // Proceed with login logic if API call is successful
             login(data); // Pass the API response to the login context
+            console.log("User is authenticated:", authstate.isauthenticated);
             navigate('/home');
         } catch (err) {
             console.error("Login error:", err.message);
