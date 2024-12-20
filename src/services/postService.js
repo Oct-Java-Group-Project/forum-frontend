@@ -19,7 +19,11 @@ export const fetchPosts = async () => {
             (Array.isArray(deletedres.data.data) ? deletedres.data.data : [deletedres.data.data]) : [];
 
         // Add null checks and default values for posts
-        const data = posts.map((post) => {
+        const data = posts.filter((post)=>{
+            const postData=post.post||post;
+            const accessibility=postData.accessibility;
+            return accessibility&&accessibility==='PUBLISHED';
+        }).map((post) => {
             const postData = post.post || post;
             const userData = post.user || {};
             return [
