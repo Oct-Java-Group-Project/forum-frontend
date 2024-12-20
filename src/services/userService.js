@@ -3,7 +3,7 @@
 import axios from "axios";
 import { capitalize } from "../utils/helpers";
 
-const URL='http://localhost:8081/users';
+const URL='http://localhost:8080/users';
 // const capitalize = (str) => {
 //     if (!str) return '';
 //     return str[0].toUpperCase() + str.slice(1).toLowerCase();

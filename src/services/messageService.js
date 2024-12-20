@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8084/messages';
+const API_BASE_URL = 'http://localhost:8080/messages';
 
 export const getMessages = async () => {
     try {
         const response = await axios.get(API_BASE_URL);
-        return response.data; // 返回数据
+        return response.data;
     } catch (error) {
         console.error('Error fetching messages:', error);
         throw error;

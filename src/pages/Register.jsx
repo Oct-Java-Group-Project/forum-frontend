@@ -18,7 +18,12 @@ function Register(){
     // selyn
     const register = async (e) => {
         e.preventDefault();
-        const user={firstname,lastname,email,password};
+        const user = {
+            firstName: firstname,
+            lastName: lastname,
+            email: email,
+            password: password
+        };
         try{
             const res=await axios.post('http://localhost:8080/auth/register',user);
             if(res.status==200||res.status==201){

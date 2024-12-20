@@ -14,6 +14,7 @@ import AdminRoute from './utils/AdminRoute';
 import ContactUs from './pages/ContactUs';
 import Message from './components/Message';
 import MessageManagement from './pages/MessageManagement';
+import History from './pages/History';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path='/contactus' element={<UserRoute><ContactUs/></UserRoute>}/>
           <Route path='/message' element={<Message/>}/>
           <Route path='/messages' element={<AdminRoute><MessageManagement/></AdminRoute>}/>
+          <Route path="/history" element={<UserRoute><History /></UserRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

@@ -7,6 +7,7 @@ import { useLocation } from "react-router-dom";
 import Dialog from "./Dialog";
 import { fetchPostDetails, updatePost } from "../services/postService";
 import { updateUser } from "../services/userService";
+import { createHistory } from "../services/historyService";
 
 function Table({ headers, initdata, activetab }) {
     const { authstate } = useAuth();
@@ -24,12 +25,6 @@ function Table({ headers, initdata, activetab }) {
     const [dialog, setdialog] = useState(false);
     const [post, setpost] = useState([]);
 
-
-    useEffect(() => {
-        // concat a record id for keyword searching in absense of a pk
-        setdata(clone(initdata).map((row, idx) => row.concat(idx)));
-    }, [initdata]);
-    // sort table by click
     const onSort = (e) => {
         const col = e.target.cellIndex + 1;
         const desc = sort.col === col && !sort.desc;
@@ -45,6 +40,31 @@ function Table({ headers, initdata, activetab }) {
         setdata(dataclone);
         setsort({ col, desc });
     }
+
+    useEffect(() => {
+        if (!Array.isArray(initdata)) {
+            console.warn('Warning: initdata is not an array:', initdata);
+            setdata([]);
+            return;
+        }
+
+        try {
+            const processedData = clone(initdata).map((row, idx) => {
+                if (!Array.isArray(row)) {
+                    console.warn('Warning: Row is not an array:', row);
+                    return Array(headers.length - 1).fill('').concat([idx]);
+                }
+                return row.concat(idx);
+            });
+
+            console.log('Processed table data:', processedData);
+            setdata(processedData);
+        } catch (error) {
+            console.error('Error processing table data:', error);
+            setdata([]);
+        }
+    }, [initdata]);
+
     // edit table
     const onEdit = (e) => {
         setedit({
@@ -167,15 +187,19 @@ function Table({ headers, initdata, activetab }) {
 
     // display post details with dialog box
     const onPost = async (id) => {
-        // api call
         try {
             const postdetails = await fetchPostDetails(id);
             setpost(postdetails);
             setdialog(true);
-        } catch (err) {
-            console.log(err);
-        }
 
+            if (postdetails && authstate.user) {
+                createHistory(authstate.user.userid, id).catch(historyErr => {
+                    console.error('Failed to create history:', historyErr);
+                });
+            }
+        } catch (err) {
+            console.error('Error fetching post details:', err);
+        }
     };
 
     return (
@@ -221,7 +245,7 @@ function Table({ headers, initdata, activetab }) {
                                             </form>
                                         );
                                     }
-                                    if (colidx === 1 && location.pathname === '/home') {
+                                    if (colidx === 1 && (location.pathname === '/home' || location.pathname === '/history')) {
                                         return <td key={colidx} className="postdetails" onClick={() => onPost(row[0])}>{cell}</td>
                                     }
                                     return <td key={colidx} className={cell === 'Published' || cell === 'Active' ? 'green' : cell === 'Deleted' || cell === 'Inactive' ? 'red' : cell === 'Admin' || cell === 'Superadmin' ? 'accent' : ''}>{cell}</td>

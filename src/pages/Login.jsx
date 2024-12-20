@@ -10,11 +10,14 @@ function Login() {
 
     const { login } = useAuth();
     const [credentials, setcredentials] = useState({ email: '', password: '', });
-    const onLogin = (e) => {
+    const onLogin = async (e) => {
         e.preventDefault();
-        login(credentials);
-        navigate('/home');
-
+        try {
+            await login(credentials);
+            navigate('/home');
+        } catch (err) {
+            console.error('Login failed:', err);
+        }
     }
     return (
         <div className="formcontainer">

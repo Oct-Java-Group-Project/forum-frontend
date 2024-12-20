@@ -11,71 +11,74 @@ export const AuthProvider = ({ children }) => {
     });
 
     const login = async (credentials) => {
-        // safety net for demo purposes
+        const isTestUser = (credentials.email === 'seabass' && credentials.password === 'letmein') ||
+            (credentials.email === 'win' && credentials.password === 'letmein');
 
-        if (credentials.email === 'seabass' && credentials.password === 'letmein') {
-            setauthstate({
-                isauthenticated: true,
-                user: {
-                    userid: 1,
-                    firstname: 'Seabass',
-                    lastname: 'Houng',
-                    email: 'seabass@gmail',
-                    profileimg: 'img.png',
-                    isadmin: false,
-                    createdat: '2021-10-10',
-
-                },
-            });
-        } else if (credentials.email === 'win' && credentials.password === 'letmein') {
-            setauthstate({
-                isauthenticated: true,
-                user: {
-                    userid: 1,
-                    firstname: 'Winnie',
-                    lastname: 'Houng',
-                    email: '18whoung@gmail',
-                    profileimg: 'img.png',
-                    isadmin: true,
-                    createdat: '2021-10-10',
-
-                },
-            });
-        }
-
-        //api call
-        try {
-            const res = await axios.post('http://localhost:8080/auth/login', credentials, {
-                headers: { 'Content-Type': 'application/json' }
-            });
-            if (res.status === 200) {
-                const token = res.data.token;
-                localStorage.setItem('token', token);
-                const email = credentials.email;
-                const userres = await axios.post(`http://localhost:8081/users/email?email=${email}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+        if (isTestUser) {
+            if (credentials.email === 'seabass') {
+                setauthstate({
+                    isauthenticated: true,
+                    user: {
+                        userid: 1,
+                        firstname: 'Seabass',
+                        lastname: 'Houng',
+                        email: 'seabass@gmail',
+                        profileimg: 'img.png',
+                        isadmin: false,
+                        createdat: '2021-10-10',
+                    }
                 });
-                if (userres.status === 200) {
-                    const userdata = userres.data;
-                    setauthstate({
-                        isauthenticated: true,
-                        user: {
-                            userid: userdata.id,
-                            firstname: userdata.firstName,
-                            lastname: userdata.lastName,
-                            email: userdata.email,
-                            isadmin: userdata.type === 'ADMIN',
-                            profileimg: userdata.profileImageUrl,
-                        }
-                    });
-                }
+            } else {
+                setauthstate({
+                    isauthenticated: true,
+                    user: {
+                        userid: 1,
+                        firstname: 'Winnie',
+                        lastname: 'Houng',
+                        email: '18whoung@gmail',
+                        profileimg: 'img.png',
+                        isadmin: true,
+                        createdat: '2021-10-10',
+                    }
+                });
             }
-        } catch (err) {
-            alert(err.response?.data?.message || 'an error happened');
+            return;
         }
 
+        const res = await axios.post('http://localhost:8080/auth/login', credentials, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+        console.log('Login response:', res.data);
+
+        if (res.status === 200) {
+            const token = res.data.data.token;
+            localStorage.setItem('token', token);
+
+            const userres = await axios.get(`http://localhost:8080/users/email`, {
+                params: { email: credentials.email },
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (userres.status === 200) {
+                const userdata = userres.data.data;
+                setauthstate({
+                    isauthenticated: true,
+                    user: {
+                        userid: userdata.id,
+                        firstname: userdata.firstName,
+                        lastname: userdata.lastName,
+                        email: userdata.email,
+                        isadmin: userdata.type === 'ADMIN' || userdata.type === 'SUPERADMIN',
+                        profileimg: userdata.profileImageUrl,
+                    }
+                });
+                return;
+            }
+        }
+        throw new Error('Login failed');
     };
     const logout = (navigate) => {
         setauthstate({

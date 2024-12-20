@@ -1,75 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { getMessages, updateMessage } from '../services/messageService';
 import UpdateMessage from '../components/UpdateMessage';
-import Select from 'react-select';
 import Nav from "../components/Nav";
+import { useAuth } from "../contexts/AuthContext";
 
 const MessageManagement = () => {
     const [messages, setMessages] = useState([]);
-    const [filteredMessages, setFilteredMessages] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [editingMessage, setEditingMessage] = useState(null);
-    const [selectedStatus, setSelectedStatus] = useState(null);
+    const { authstate } = useAuth();
     const messagesPerPage = 7;
-
-    const statusOptions = [
-        { value: 'OPEN', label: 'OPEN' },
-        { value: 'IN_PROGRESS', label: 'IN_PROGRESS' },
-        { value: 'CLOSED', label: 'CLOSED' },
-        { value: 'RESOLVED', label: 'RESOLVED' },
-    ];
 
     useEffect(() => {
         fetchMessages();
     }, []);
 
-    const parseStatus = (status) => {
-        try {
-            const parsed = JSON.parse(status);
-            return parsed.status || status;
-        } catch (error) {
-            return status;
-        }
-    };
-
     const fetchMessages = async () => {
         try {
             const data = await getMessages();
-            const processedMessages = data.map(msg => ({
-                ...msg,
-                status: parseStatus(msg.status)
-            }));
-            const sortedMessages = processedMessages.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
-            setMessages(sortedMessages);
-            setFilteredMessages(sortedMessages);
+            setMessages(data);
         } catch (error) {
             console.error('Failed to fetch messages:', error);
-        }
-    };
-
-    const handleSearch = () => {
-        if (selectedStatus) {
-            const filtered = messages.filter(msg => msg.status === selectedStatus.value);
-            setFilteredMessages(filtered);
-        } else {
-            setFilteredMessages(messages);
-        }
-        setCurrentPage(1);
-    };
-
-    const indexOfLastMessage = currentPage * messagesPerPage;
-    const indexOfFirstMessage = indexOfLastMessage - messagesPerPage;
-    const currentMessages = filteredMessages.slice(indexOfFirstMessage, indexOfLastMessage);
-
-    const handleNextPage = () => {
-        if (currentPage < Math.ceil(filteredMessages.length / messagesPerPage)) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
         }
     };
 
@@ -79,136 +30,95 @@ const MessageManagement = () => {
 
     const handleSaveUpdate = async (updatedMessage) => {
         try {
-            const messageToUpdate = {
-                ...updatedMessage,
-                status: typeof updatedMessage.status === 'object' ? updatedMessage.status.value : updatedMessage.status
-            };
-
-            await updateMessage(updatedMessage.messageId, messageToUpdate);
-
-            const updatedMessages = messages.map((msg) =>
-                msg.messageId === updatedMessage.messageId
-                    ? { ...msg, ...messageToUpdate }
-                    : msg
-            );
-
-            setMessages(updatedMessages);
-            setFilteredMessages(updatedMessages);
+            await updateMessage(updatedMessage.messageId, updatedMessage);
+            await fetchMessages();
             setEditingMessage(null);
         } catch (error) {
             console.error('Error saving update:', error);
         }
     };
 
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const handleNextPage = () => {
+        if (currentPage < Math.ceil(messages.length / messagesPerPage)) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const indexOfLastMessage = currentPage * messagesPerPage;
+    const indexOfFirstMessage = indexOfLastMessage - messagesPerPage;
+    const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
+
     return (
-
-        <div style={{
-            margin: '10vh auto', // Center vertically and horizontally
-            padding: '20px',
-            maxWidth: '80%', // Keep it responsive
-            minHeight: '70vh',
-            backgroundColor: '#f9f9f9',
-            color: '#282C34',
-            borderRadius: '8px', // Slight rounded edges for better aesthetics
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)'
-
-        }}>
+        <div className="container">
             <Nav />
-            <h1 style={{ textAlign: 'center'}}>Message Management</h1>
-
-            {!editingMessage && (
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-                    <div style={{ width: '80%' }}>
-                        <Select
-                            options={statusOptions}
-                            value={selectedStatus}
-                            onChange={setSelectedStatus}
-                            placeholder="Select Status"
-                            isClearable
+            <main className="main">
+                <div className="table">
+                    {!editingMessage ? (
+                        <>
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Subject</th>
+                                    <th>Email</th>
+                                    <th>Message</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {currentMessages.map((msg) => (
+                                    <tr key={msg.messageId}>
+                                        <td>{new Date(msg.dateCreated).toLocaleString()}</td>
+                                        <td>{msg.subject}</td>
+                                        <td>{msg.email}</td>
+                                        <td>{msg.message}</td>
+                                        <td className={msg.status === 'OPEN' ? 'green' : 'red'}>{msg.status}</td>
+                                        <td>
+                                            <button onClick={() => handleUpdateClick(msg)}>
+                                                Update
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                            <div className="buttons" style={{ marginTop: '1em' }}>
+                                <button
+                                    onClick={handlePreviousPage}
+                                    disabled={currentPage === 1}
+                                >
+                                    Previous
+                                </button>
+                                <span style={{ margin: '0 1em' }}>
+                                    Page {currentPage} of {Math.ceil(messages.length / messagesPerPage)}
+                                </span>
+                                <button
+                                    onClick={handleNextPage}
+                                    disabled={currentPage >= Math.ceil(messages.length / messagesPerPage)}
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </>
+                    ) : (
+                        <UpdateMessage
+                            message={editingMessage}
+                            onSave={handleSaveUpdate}
+                            onCancel={() => setEditingMessage(null)}
                         />
-                    </div>
-                    <button
-                        onClick={handleSearch}
-                        style={{
-                        //     marginLeft: '10px',
-                        //     padding: '8px 16px',
-                        //     backgroundColor: '#007bff',
-                        //     color: 'white',
-                        //     border: 'none',
-                        //     borderRadius: '4px',
-                        //     cursor: 'pointer'
-                        }}
-                    >
-                        Search
-                    </button>
+                    )}
                 </div>
-            )}
-
-            {!editingMessage && (
-                <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <thead>
-                        <tr>
-                            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Date</th>
-                            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Subject</th>
-                            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Email</th>
-                            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Message</th>
-                            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Status</th>
-                            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {currentMessages.map((msg) => (
-                            <tr key={msg.messageId}>
-                                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{new Date(msg.dateCreated).toLocaleString()}</td>
-                                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{msg.subject}</td>
-                                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{msg.email}</td>
-                                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{msg.message}</td>
-                                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{msg.status}</td>
-                                <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                                    <button
-                                        onClick={() => handleUpdateClick(msg)}
-                                        style={{
-                                            // padding: '5px 10px',
-                                            // backgroundColor: '#28a745',
-                                            // color: 'white',
-                                            // border: 'none',
-                                            // borderRadius: '4px',
-                                            // cursor: 'pointer'
-                                        }}
-                                    >
-                                        Update
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-                        <button onClick={handlePreviousPage} disabled={currentPage === 1}>
-                            Previous Page
-                        </button>
-                        <span>
-                            Page {currentPage} of {Math.ceil(filteredMessages.length / messagesPerPage)}
-                        </span>
-                        <button
-                            onClick={handleNextPage}
-                            disabled={currentPage === Math.ceil(filteredMessages.length / messagesPerPage)}
-                        >
-                            Next Page
-                        </button>
-                    </div>
+                <div className="stats">
+                    <h3>Welcome, {authstate.user.firstname} {authstate.user.lastname}</h3>
                 </div>
-            )}
-
-            {editingMessage && (
-                <UpdateMessage
-                    message={editingMessage}
-                    onSave={handleSaveUpdate}
-                    onCancel={() => setEditingMessage(null)}
-                />
-            )}
+            </main>
         </div>
     );
 };

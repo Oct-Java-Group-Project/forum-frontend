@@ -22,7 +22,7 @@ function Message() {
             message:msg,
         };
         try{
-            const res=await axios.post('http://localhost:8084/messages',messagedata,{
+            const res=await axios.post('http://localhost:8080/messages',messagedata,{
                 headers:{
                     'Content-Type':'application/json',
                 },
