@@ -5,9 +5,9 @@ import PropTypes from "prop-types";
 import { useAuth } from "../contexts/AuthContext";
 import { useLocation } from "react-router-dom";
 import Dialog from "./Dialog";
-import { fetchPostDetails } from "../services/postService";
+import { fetchPostDetails, updatePost } from "../services/postService";
 
-function Table({ headers, initdata }) {
+function Table({ headers, initdata, activetab }) {
     const { authstate } = useAuth();
     // for conditional rendering of detail page
     const location = useLocation();
@@ -20,8 +20,8 @@ function Table({ headers, initdata }) {
     const [search, setsearch] = useState(false);
     const [presearchdata, setpresearchdata] = useState(null);
     // for post detail dialog box
-    const [dialog,setdialog]=useState(false);
-    const [post,setpost]=useState([]);
+    const [dialog, setdialog] = useState(false);
+    const [post, setpost] = useState([]);
 
 
     useEffect(() => {
@@ -48,33 +48,50 @@ function Table({ headers, initdata }) {
     const onEdit = (e) => {
         setedit({
             row: parseInt(e.target.parentNode.dataset.row, 10),
-            col: e.target.cellIndex+1,
+            col: e.target.cellIndex + 1,
         });
     }
-    const onSaveEdit = (e) => {
+    const onSaveEdit = async (e) => {
         e.preventDefault();
         const input = e.target.firstChild;
-        
-        // api put call 
-        const postid=data[edit.row][0];
-        const posttitle=data[edit.row][1];
-        const updatedata={}
 
-        const dataclone = clone(data).map((row) => {
-            if (row[row.length - 1] === edit.row) {
-                row[edit.col] = input.value;
-            }
-            return row;
-        });
-        if (!search) {
-            dataclone[edit.row][edit.col] = input.value;
-        } else {
-            const presearch = clone(presearchdata);
-            presearch[edit.row][edit.col] = input.value;
-            setpresearchdata(presearch);
+        // api put call 
+        const postid = data[edit.row][0];
+        let updateddata = {};
+        if (activetab === 'All') {
+            updateddata = {
+                title: data[edit.row][1],
+                userId: data[edit.row][2],
+                createdAt: data[edit.row][3],
+                accessibility: data[edit.row][4],
+            };
+        } else if (activetab === 'Deleted') {
+            updateddata = {
+                title: data[edit.row][1],
+                userId: data[edit.row][2],
+                createdAt: data[edit.row][3],
+            };
         }
-        setdata(dataclone);
-        setedit(null);
+        try {
+            await updatePost(postid, updateddata);
+            const dataclone = clone(data).map((row) => {
+                if (row[row.length - 1] === edit.row) {
+                    row[edit.col] = input.value;
+                }
+                return row;
+            });
+            if (!search) {
+                dataclone[edit.row][edit.col] = input.value;
+            } else {
+                const presearch = clone(presearchdata);
+                presearch[edit.row][edit.col] = input.value;
+                setpresearchdata(presearch);
+            }
+            setdata(dataclone);
+            setedit(null);
+        } catch {
+            console.log('could not update post...');
+        };
     }
 
     // search table
@@ -98,7 +115,7 @@ function Table({ headers, initdata }) {
         const idx = e.target.dataset.idx;
         const searchdata = presearchdata.filter((row) => {
             return row.some((cell, colindex) => {
-                if (colindex === parseInt(idx, 10) ) {
+                if (colindex === parseInt(idx, 10)) {
                     return cell.toString().toLowerCase().includes(keyword);
                 }
                 return false;
@@ -110,7 +127,7 @@ function Table({ headers, initdata }) {
     const searchboxes = !search ? null : (
         <tr onChange={onSearch}>
             {headers.map((_, idx) => {
-                if(idx===0)return;
+                if (idx === 0) return;
                 return <td key={idx}>
                     <input type="text" data-idx={idx} placeholder={`Search ${headers.length > 4 ? '' : headers[idx]}`} className={headers.length > 4 ? 'searchbox' : ''} />
                 </td>
@@ -119,13 +136,13 @@ function Table({ headers, initdata }) {
     );
 
     // display post details with dialog box
-    const onPost=async (id)=>{
+    const onPost = async (id) => {
         // api call
-        try{
-            const postdetails=await fetchPostDetails(id);
+        try {
+            const postdetails = await fetchPostDetails(id);
             setpost(postdetails);
             setdialog(true);
-        }catch(err){
+        } catch (err) {
             console.log(err);
         }
 
@@ -137,7 +154,7 @@ function Table({ headers, initdata }) {
                 <p className="button" onClick={toggleSearch}>
                     {search ? 'Hide Search' : 'Show Search'}
                 </p>
-                {!authstate.user.isadmin&&location.pathname==='/home'&&<p id="addpost">+</p>}
+                {!authstate.user.isadmin && location.pathname === '/home' && <p id="addpost">+</p>}
 
             </div>
 
@@ -168,23 +185,23 @@ function Table({ headers, initdata }) {
                                     if (edit && edit.row === rowidx && edit.col === colidx) {
                                         cell = (
                                             <form onSubmit={onSaveEdit}>
-                                                <input type="text" defaultValue={cell} list={`${rowidx}-${colidx}`}/>
-                          
-                                                
+                                                <input type="text" defaultValue={cell} list={`${rowidx}-${colidx}`} />
+
+
                                             </form>
                                         );
                                     }
                                     if (colidx === 1 && location.pathname === '/home') {
-                                        return <td key={colidx} className="postdetails" onClick={()=>onPost(row[0])}>{cell}</td>
+                                        return <td key={colidx} className="postdetails" onClick={() => onPost(row[0])}>{cell}</td>
                                     }
-                                    return <td key={colidx} className={cell === 'Published' ? 'green' : cell === 'Deleted' ? 'red' : ''}>{cell}</td>
+                                    return <td key={colidx} className={cell === 'Published' || cell === 'Active' ? 'green' : cell === 'Deleted' || cell === 'Inactive' ? 'red' : cell === 'Admin' || cell === 'Superadmin' ? 'accent' : ''}>{cell}</td>
                                 })}
                             </tr>
                         );
                     })}
                 </tbody>
             </table>
-            <Dialog isvisible={dialog} onClose={()=>setdialog(false)} postdetails={post}/>
+            <Dialog isvisible={dialog} onClose={() => setdialog(false)} postdetails={post} />
         </div>
     );
 }

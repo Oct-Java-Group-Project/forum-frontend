@@ -73,6 +73,7 @@ export const fetchPostDetails = async (postid) => {
 export const updatePost=async(postid,post)=>{
     try{
         const res=await axios.put(`${URL}/${postid}`,post);
+        console.log(res);
     }catch(err){
         alert('could not update post at this time...');
     }

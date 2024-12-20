@@ -54,7 +54,7 @@ function Home() {
                         </div>
                     }
 
-                    <Table headers={authstate.user.isadmin?activetab==='All'?adminheaders:headers:headers} initdata={authstate.user.isadmin?activetab==='All'?admindata:deleteddata:data} isadmin={authstate.user.isadmin} />
+                    <Table headers={authstate.user.isadmin?activetab==='All'?adminheaders:headers:headers} initdata={authstate.user.isadmin?activetab==='All'?admindata:deleteddata:data} activetab={activetab}/>
                 </div>
              
                 
