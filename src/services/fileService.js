@@ -112,6 +112,7 @@ export const FileUpload = () => {
                     Upload
                 </button>
             </form>
+            <p>{downloadUrl}</p>
             <div>
                 <label htmlFor="downloadInput">Download URL:</label>
                 <input
