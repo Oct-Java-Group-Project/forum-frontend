@@ -78,10 +78,10 @@ export const updatePost=async(postid,post)=>{
     }
     const postcontent=postdetails.content;
     post={...post, content:postcontent};
-    console.log(post);
+    // console.log(post);
     try{
         const res=await axios.put(`${URL}/${postid}`,post);
-        console.log(res);
+        // console.log(res);
     }catch(err){
         alert('could not update post at this time...');
     }

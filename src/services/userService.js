@@ -24,6 +24,16 @@ export const fetchUsers = async () => {
         return { _userdata };
     }
 };
+export const updateUser=async(userid,user)=>{
+
+    try{
+        console.log(user);
+        const res=await axios.put(`${URL}/${userid}`,user);
+        console.log(res);
+    }catch(err){
+        alert('could not update user at this time...');
+    }
+};
 const _userdata = [
     ['1','win','houng','18whoung@gmail123211111111111111111','2021','admin','Active'],
     ['2','seabass','houng','seabass@gmail','2020','user','Inactive'],

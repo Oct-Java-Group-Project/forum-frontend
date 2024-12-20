@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { clone, parsedate } from "../utils/helpers";
 import './table.css';
-import PropTypes from "prop-types";
+// import PropTypes from "prop-types";
 import { useAuth } from "../contexts/AuthContext";
 import { useLocation } from "react-router-dom";
 import Dialog from "./Dialog";
 import { fetchPostDetails, updatePost } from "../services/postService";
+import { updateUser } from "../services/userService";
 
 function Table({ headers, initdata, activetab }) {
     const { authstate } = useAuth();
@@ -56,11 +57,32 @@ function Table({ headers, initdata, activetab }) {
         const input = e.target.firstChild;
 
         if (location.pathname === '/home') {
-            editPosts(input);
+            persistPostEdit(input);
+        }else if(location.pathname=='/users'){
+            persistUserEdit(input);
         }
 
     }
-    const editPosts = async (input) => {
+    const persistUserEdit=async(input)=>{
+        const userid=data[edit.row][0];
+        let updatedata={
+            // firstname, lastname, email, createdAt, type, active
+            firstName:edit.col===1?input.value:data[edit.row][1],
+            lastName:edit.col===2?input.value:data[edit.row][2],
+            email:edit.col===3?input.value:data[edit.row][3],
+            createdAt:parsedate(edit.col===4?input.value:data[edit.row][4]),
+            type:edit.col===5?input.value:data[edit.row][5],
+            active:edit.col===6?input.value:data[edit.row][6],
+        };
+
+        try{
+            updateUser(userid,updatedata);
+            updateUIAfterEdit(input);
+        }catch{
+            console.log('could not update user...');
+        } 
+    };
+    const persistPostEdit = async (input) => {
         // api put call 
         const postid = data[edit.row][0];
         let updateddata = {};
@@ -80,26 +102,28 @@ function Table({ headers, initdata, activetab }) {
         }
         try {
             await updatePost(postid, updateddata);
-            const dataclone = clone(data).map((row) => {
-                if (row[row.length - 1] === edit.row) {
-                    row[edit.col] = input.value;
-                }
-                return row;
-            });
-            if (!search) {
-                dataclone[edit.row][edit.col] = input.value;
-            } else {
-                const presearch = clone(presearchdata);
-                presearch[edit.row][edit.col] = input.value;
-                setpresearchdata(presearch);
-            }
-            setdata(dataclone);
-            setedit(null);
+            updateUIAfterEdit(input);
         } catch {
             console.log('could not update post...');
         };
     }
-
+    const updateUIAfterEdit=(input)=>{
+        const dataclone = clone(data).map((row) => {
+            if (row[row.length - 1] === edit.row) {
+                row[edit.col] = input.value;
+            }
+            return row;
+        });
+        if (!search) {
+            dataclone[edit.row][edit.col] = input.value;
+        } else {
+            const presearch = clone(presearchdata);
+            presearch[edit.row][edit.col] = input.value;
+            setpresearchdata(presearch);
+        }
+        setdata(dataclone);
+        setedit(null);
+    };
     // search table
     const toggleSearch = () => {
         console.log(initdata);
