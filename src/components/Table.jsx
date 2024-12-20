@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { clone } from "../utils/helpers";
+import { clone, parsedate } from "../utils/helpers";
 import './table.css';
 import PropTypes from "prop-types";
 import { useAuth } from "../contexts/AuthContext";
@@ -60,16 +60,16 @@ function Table({ headers, initdata, activetab }) {
         let updateddata = {};
         if (activetab === 'All') {
             updateddata = {
-                title: data[edit.row][1],
-                userId: data[edit.row][2],
-                createdAt: data[edit.row][3],
-                accessibility: data[edit.row][4],
+                title: edit.col===1?input.value:data[edit.row][1],
+                userId: edit.col===2?input.value:data[edit.row][2],
+                createdAt: parsedate(edit.col===3?input.value:data[edit.row][3]),
+                accessibility: (data[edit.col===4?input.value:edit.row][4]).toUpperCase(),
             };
         } else if (activetab === 'Deleted') {
             updateddata = {
-                title: data[edit.row][1],
-                userId: data[edit.row][2],
-                createdAt: data[edit.row][3],
+                title: edit.col===1?input.value:data[edit.row][1],
+                userId: edit.col===2?input.value:data[edit.row][2],
+                createdAt: parsedate(edit.col===3?input.value:data[edit.row][3]),
             };
         }
         try {
