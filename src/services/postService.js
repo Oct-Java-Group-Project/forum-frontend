@@ -3,6 +3,7 @@
 import axios from "axios";
 import { capitalize } from "../utils/helpers";
 import { useAuth } from "../contexts/AuthContext";
+import { fetchHistory } from "./historyService";
 
 const URL = 'http://localhost:8080/posts';
 export const fetchPosts = async () => {
@@ -126,14 +127,14 @@ export const fetchUserPosts = async (userid) => {
             return postData.userId === userid && postData.accessibility === 'PUBLISHED';
         }).map((post) => {
             const postData = post.post || post;
-            console.log('published user data',postData);
+            console.log('published user data', postData);
             const createdat = postData.metadata ? new Date(postData.metadata.createdAt).toLocaleDateString() : '';
             return [
                 postData.postId || '',
                 postData.title || '',
                 createdat,
                 postData.accessibility,
-                postData.archived?'Archived':'Active',
+                postData.archived ? 'Archived' : 'Active',
             ];
         });
         const draftdata = posts.filter((post) => {
@@ -165,7 +166,7 @@ export const fetchUserPosts = async (userid) => {
         const archiveddata = posts.filter((post) => {
             const postData = post.post || post;
             // fetch user, published
-            return postData.userId === userid && postData?.archived===true;
+            return postData.userId === userid && postData?.archived === true;
         }).map((post) => {
             const postData = post.post || post;
             const createdat = postData.metadata ? new Date(postData.metadata.createdAt).toLocaleDateString() : '';
@@ -175,11 +176,11 @@ export const fetchUserPosts = async (userid) => {
                 createdat,
             ];
         });
-        return { publisheddata, draftdata,hiddendata,archiveddata };
+        return { publisheddata, draftdata, hiddendata, archiveddata };
     } catch (err) {
         // alert('we could not fetch your posts, please try again later...');
         console.error('Error fetching posts:', err);
-        return { publisheddata: _publisheddata, draftdata: _draftdata ,hiddendata:_draftdata,archiveddata:_draftdata};
+        return { publisheddata: _publisheddata, draftdata: _draftdata, hiddendata: _draftdata, archiveddata: _draftdata };
     }
 };
 
@@ -198,6 +199,8 @@ export const updatePost = async (postid, post) => {
         alert('could not update post at this time...');
     }
 };
+
+
 
 const _publisheddata = [
     [1, 'Easy Bread Pudding Recipe', '2024-12-15', 'Active', '\u{1F4E6}'],

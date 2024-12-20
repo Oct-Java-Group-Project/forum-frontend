@@ -57,7 +57,7 @@ function Table({ headers, initdata, activetab }) {
                 return row.concat(idx);
             });
 
-            console.log('Processed table data:', processedData);
+            // console.log('Processed table data:', processedData);
             setdata(processedData);
         } catch (error) {
             console.error('Error processing table data:', error);

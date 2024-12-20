@@ -7,6 +7,7 @@ import './home.css';
 import './profile.css';
 import { useEffect, useState } from "react";
 import { fetchUserPosts } from "../services/postService";
+import { fetchHistory } from "../services/historyService";
 function Profile() {
 
     const { authstate } = useAuth();
@@ -20,22 +21,26 @@ function Profile() {
     const [draftdata,setdraftdata]=useState([]);
     const [hiddendata,sethiddendata]=useState([]);
     const [archiveddata,setarchiveddata]=useState([]);
+    const [historydata,sethistorydata]=useState([]);
     useEffect(()=>{
         const getUserPosts=async()=>{
             const {publisheddata,draftdata,hiddendata,archiveddata}=await fetchUserPosts(authstate.user.userid);
+            const historydata=await fetchHistory(authstate.user.userid);
             setpublisheddata(publisheddata);
             setdraftdata(draftdata);
             sethiddendata(hiddendata);
             setarchiveddata(archiveddata);
+            sethistorydata(historydata);
         };
         getUserPosts();
     },[]);
-    const setTabData = () => {
+    const setTabData = async() => {
         switch (activetab) {
             case 'Published':setactivetabdata(publisheddata);break;
             case 'Drafts':setactivetabdata(draftdata);break;
             case 'Hidden':setactivetabdata(hiddendata);break;
             case 'Archived':setactivetabdata(archiveddata);break;
+            case 'History':setactivetabdata(historydata);break;
             default: setactivetabdata(publisheddata);break;
         }
     }
@@ -48,6 +53,7 @@ function Profile() {
     const tabs = ['Published', 'Drafts', 'Hidden', 'Archived','History'];
     const publishedheaders = ['ID','Title', 'Date', 'Status', '\u{1F4E6}'];
     const draftheaders = ['ID','Title', 'Date'];
+    const historyheaders=['ID','Title','Author','View Date'];
 
     const getTabHeaders = () => {
         switch (activetab) {
@@ -55,11 +61,13 @@ function Profile() {
             case 'Drafts': return draftheaders;
             case 'Hidden': return draftheaders;
             case 'Archived': return draftheaders;
+            case 'History': return historyheaders;
             default: return publishedheaders;
         }
     }
 
 
+    
     return (
         <div className="container">
             <Nav />
