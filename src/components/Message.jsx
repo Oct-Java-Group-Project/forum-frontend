@@ -3,6 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useState } from "react";
 import '../pages/form.css';
 import './message.css';
+import axios from "axios";
 
 function Message() {
 
@@ -12,12 +13,35 @@ function Message() {
     const [subject, setsubject] = useState('');
     const [email, setemail] = useState(authstate.user ? authstate.user.email : '');
     const [msg, setmsg] = useState('');
-    const onSend = (e) => {
+    const onSend = async(e) => {
         e.preventDefault();
         // api call - send message
-
-        navigate('/home');
-
+        const messagedata={
+            subject,
+            email,
+            message:msg,
+        };
+        try{
+            const res=await axios.post('http://localhost:8084/messages',messagedata,{
+                headers:{
+                    'Content-Type':'application/json',
+                },
+            });
+            if (res.status===200){
+                alert('message sent!');
+                if(!authstate.user){
+                    navigate('/');
+                }else{
+                    navigate('/home');
+                }
+            }else{
+                alert('can not send message right now...');
+            }
+        }catch(err){
+            alert('problem with message transit...');
+            navigate('/');
+            console.error(err);
+        }
     }
     return (
         <div className="formcontainer">
