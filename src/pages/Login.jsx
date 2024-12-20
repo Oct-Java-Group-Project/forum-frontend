@@ -7,7 +7,6 @@ import { useAuth } from "../contexts/AuthContext";
 function Login() {
 
     const navigate = useNavigate();
-
     const { login } = useAuth();
     const [credentials, setcredentials] = useState({ username: '', password: '', });
     const [error, setError] = useState('');
@@ -41,7 +40,8 @@ function Login() {
         }
     };
     return (
-        <div className="formcontainer">
+        <div className="background">
+            <div className="formcontainer">
             <form onSubmit={onLogin} className="card">
                 <h3>Login</h3>
                 {error && <div style={{ color: "red" }}>{error}</div>}
@@ -62,6 +62,7 @@ function Login() {
                     </div>
                 </div>
             </form>
+        </div>
         </div>
     )
 }

@@ -47,38 +47,45 @@ function Register(){
         }
     };
     return (
-        <div className="formcontainer">
-            <form onSubmit={register} className="card">
-                <h3>Register</h3>
-                {error && <div style={{ color: "red" }}>{error}</div>}
-                <div>
-                    <label htmlFor="username">Username</label>
-                    <input type="text" id="username" value={username} onChange={(e) => setusername(e.target.value)} required />
-                </div>
-                <div>
-                    <label htmlFor="password">Password</label>
-                    <input type="password" id="password" value={password} onChange={(e) => setpassword(e.target.value)} required />
-                </div>
-                <div>
-                    <label htmlFor="firstname">First Name</label>
-                    <input type="firstname" id="firstname" value={firstname} onChange={(e) => setfirstname(e.target.value)} required />
-                </div>                
-                <div>
-                    <label htmlFor="lastname">Last Name</label>
-                    <input type="lastname" id="lastname" value={lastname} onChange={(e) => setlastname(e.target.value)} required />
-                </div>                
-                <div>
-                    <label htmlFor="email">Email</label>
-                    <input type="email" id="email" value={email} onChange={(e) => setemail(e.target.value)} required />
-                </div>
-                <div className="button">
-                    <button type="submit">Login</button>
-                    <div className="links">
-                        <a onClick={()=>navigate('/message')}>Contact Us</a>
+        <div className="background">
+            <div className="formcontainer">
+                <form onSubmit={register} className="card">
+                    <h3>Register</h3>
+                    {error && <div style={{color: "red"}}>{error}</div>}
+                    <div>
+                        <label htmlFor="username">Username</label>
+                        <input type="text" id="username" value={username} onChange={(e) => setusername(e.target.value)}
+                               required/>
                     </div>
-                </div>
-            </form>
+                    <div>
+                        <label htmlFor="password">Password</label>
+                        <input type="password" id="password" value={password}
+                               onChange={(e) => setpassword(e.target.value)} required/>
+                    </div>
+                    <div>
+                        <label htmlFor="firstname">First Name</label>
+                        <input type="firstname" id="firstname" value={firstname}
+                               onChange={(e) => setfirstname(e.target.value)} required/>
+                    </div>
+                    <div>
+                        <label htmlFor="lastname">Last Name</label>
+                        <input type="lastname" id="lastname" value={lastname}
+                               onChange={(e) => setlastname(e.target.value)} required/>
+                    </div>
+                    <div>
+                        <label htmlFor="email">Email</label>
+                        <input type="email" id="email" value={email} onChange={(e) => setemail(e.target.value)}
+                               required/>
+                    </div>
+                    <div className="button">
+                        <button type="submit">Login</button>
+                        <div className="links">
+                            <a onClick={() => navigate('/message')}>Contact Us</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-    );
-}
-export default Register;
+            );
+            }
+            export default Register;
