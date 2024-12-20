@@ -26,6 +26,7 @@ function Message() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                mode:'no-cors',
             });
 
             if (res.status === 200 || res.status === 201) {

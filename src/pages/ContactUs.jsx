@@ -18,7 +18,7 @@ function ContactUs() {
                 </div>
 
                 <div className="stats">
-                    <h3>Welcome, {authstate.user.email}</h3>
+                    <h3>Welcome, {authstate.user.firstname} {authstate.user.lastname}</h3>
                 </div>
             </main>
         </div>
