@@ -5,6 +5,7 @@ import './home.css';
 import Nav from '../components/Nav';
 import { useEffect, useState } from 'react';
 import { fetchPosts } from "../services/postService";
+import { FileUpload } from "../services/fileService";
 
 function Home() {
     const { authstate } = useAuth();
@@ -46,21 +47,29 @@ function Home() {
             <Nav/>
             <main className="main">
 
-            
+
                 <div className="table">
                     {
-                        authstate.user.isadmin&&<div className='tabs'>
-                            {tabs.map((tab, idx)=><a key={idx} onClick={()=>{setactivetab(tab);setTabData()}} className={`tab ${activetab === tab ? 'activetab' : ''}`}>{tab}</a>)}
+                        authstate.user.isadmin && <div className='tabs'>
+                            {tabs.map((tab, idx) => <a key={idx} onClick={() => {
+                                setactivetab(tab);
+                                setTabData()
+                            }} className={`tab ${activetab === tab ? 'activetab' : ''}`}>{tab}</a>)}
                         </div>
                     }
 
-                    <Table headers={authstate.user.isadmin?activetab==='All'?adminheaders:headers:headers} initdata={authstate.user.isadmin?activetab==='All'?admindata:deleteddata:data} activetab={activetab}/>
+                    <Table headers={authstate.user.isadmin ? activetab === 'All' ? adminheaders : headers : headers}
+                           initdata={authstate.user.isadmin ? activetab === 'All' ? admindata : deleteddata : data}
+                           activetab={activetab}/>
                 </div>
-             
-                
+
+
                 <div className="stats">
                     <h3>Welcome, {authstate.user.firstname} {authstate.user.lastname}</h3>
                 </div>
+                {/*<div>*/}
+                {/*    <FileUpload/>*/}
+                {/*</div>*/}
             </main>
         </div>
     )
