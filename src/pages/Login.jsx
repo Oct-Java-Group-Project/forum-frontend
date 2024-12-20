@@ -20,27 +20,32 @@ function Login() {
         }
     }
     return (
-        <div className="formcontainer">
-            <form onSubmit={onLogin} className="card">
-                <h3>Login</h3>
-                <div>
-                    <label htmlFor="email">Email</label>
-                    <input type="text" value={credentials.email} onChange={(e)=>setcredentials({...credentials,email:e.target.value})} required />
-                </div>
-                <div>
-                    <label htmlFor="password">Password</label>
-                    <input type="password" value={credentials.password} onChange={(e) => setcredentials({...credentials,password:e.target.value})} required />
-                </div>
-                <div className="button">
-                    <button type="submit">Login</button>
-                    <div className="links">
-                        <a href="#">Forgot Password?</a>
-                        <a href="/register">Register</a>
-                        <a onClick={()=>navigate('/message')}>Contact Us</a>
+        <div className="background">
+            <div className="formcontainer">
+                <form onSubmit={onLogin} className="card">
+                    <h3>Login</h3>
+                    <div>
+                        <label htmlFor="Email">Username</label>
+                        <input type="text" value={credentials.email}
+                               onChange={(e) => setcredentials({...credentials, email: e.target.value})} required/>
                     </div>
-                </div>
-            </form>
+                    <div>
+                        <label htmlFor="password">Password</label>
+                        <input type="password" value={credentials.password}
+                               onChange={(e) => setcredentials({...credentials, password: e.target.value})} required/>
+                    </div>
+                    <div className="button">
+                        <button type="submit">Login</button>
+                        <div className="links">
+                            <a href="#">Forgot Password?</a>
+                            <a href="/register">Register</a>
+                            <a onClick={() => navigate('/message')}>Contact Us</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     )
 }
+
 export default Login;
