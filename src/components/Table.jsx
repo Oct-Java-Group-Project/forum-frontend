@@ -51,25 +51,31 @@ function Table({ headers, initdata, activetab }) {
             col: e.target.cellIndex + 1,
         });
     }
-    const onSaveEdit = async (e) => {
+    const onSaveEdit = (e) => {
         e.preventDefault();
         const input = e.target.firstChild;
 
+        if (location.pathname === '/home') {
+            editPosts(input);
+        }
+
+    }
+    const editPosts = async (input) => {
         // api put call 
         const postid = data[edit.row][0];
         let updateddata = {};
         if (activetab === 'All') {
             updateddata = {
-                title: edit.col===1?input.value:data[edit.row][1],
-                userId: edit.col===2?input.value:data[edit.row][2],
-                createdAt: parsedate(edit.col===3?input.value:data[edit.row][3]),
-                accessibility: (data[edit.col===4?input.value:edit.row][4]).toUpperCase(),
+                title: edit.col === 1 ? input.value : data[edit.row][1],
+                userId: edit.col === 2 ? input.value : data[edit.row][2],
+                createdAt: parsedate(edit.col === 3 ? input.value : data[edit.row][3]),
+                accessibility: (edit.col === 4 ? input.value : data[edit.row][4]).toUpperCase(),
             };
         } else if (activetab === 'Deleted') {
             updateddata = {
-                title: edit.col===1?input.value:data[edit.row][1],
-                userId: edit.col===2?input.value:data[edit.row][2],
-                createdAt: parsedate(edit.col===3?input.value:data[edit.row][3]),
+                title: edit.col === 1 ? input.value : data[edit.row][1],
+                userId: edit.col === 2 ? input.value : data[edit.row][2],
+                createdAt: parsedate(edit.col === 3 ? input.value : data[edit.row][3]),
             };
         }
         try {
