@@ -8,6 +8,7 @@ import './profile.css';
 import { useEffect, useState } from "react";
 import { fetchUserPosts } from "../services/postService";
 import { fetchHistory } from "../services/historyService";
+import {ImageDisplay} from "../components/ImageDisplay";
 function Profile() {
 
     const { authstate } = useAuth();
@@ -82,7 +83,8 @@ function Profile() {
                 </div>
                 <div className="stats">
                     <div className="profile-userinfo">
-                        <img src={logo} className="App-logo" alt="logo" id="profileimg"/>
+                        {/*<img src={logo} className="App-logo" alt="logo" id="profileimg"/>*/}
+                        <ImageDisplay profileImgUrl={authstate.user.profileimg} />
 
                         <div className="userdetail">
                             <h3>{authstate.user.firstname} {authstate.user.lastname}</h3>

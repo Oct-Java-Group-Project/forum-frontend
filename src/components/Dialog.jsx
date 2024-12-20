@@ -1,9 +1,59 @@
 import './dialog.css';
 import logo from '../logo.svg';
+import { useState } from 'react';
 
-function Dialog({ isvisible, onClose, postdetails,isnewpost }) {
-
+// postdetails: for displaying post details
+// isnewpost,onPostSubmit: for creating new posts
+function Dialog({ isvisible, onClose, postdetails,isnewpost,onPostSubmit}) {
+    const [title,settitle]=useState('');
+    const [content,setcontent]=useState('');
     if (!isvisible) return null;
+
+
+    if(isnewpost){
+
+        const publishpost=()=>{
+            onPostSubmit({title,content});;
+            onClose();
+        };
+        const savepost=()=>{
+            onPostSubmit({title,content});;
+            onClose();
+        };
+
+        return(
+            <>
+            <div className="overlay" onClick={onClose}></div>
+            <div className="dialog">
+                <button className="exit" onClick={onClose}>X</button>
+                <div className='dialoginfo'>
+                    <img src={logo} className="App-logo" alt="logo" id='dialogprofileimg' />
+                    {/* <p>Author: {postdetails.author}</p> */}
+                </div>
+                <div className='dialogheaderinput'>
+                        <input type='text' placeholder='Title' value={title} onChange={(e)=>settitle(e.target.value)}/>
+  
+                    {/* <hr className='divide'></hr> */}
+                    
+                </div>
+
+
+                {/* <hr className='divide'></hr> */}
+                <div className='dialogcontent-wrapper'>
+                <textarea className="dialogcontentinput" placeholder='Content' value={content} onChange={(e)=>setcontent(e.target.value)}/>
+                </div>
+                <div>
+                <button onClick={savepost}>Save</button>
+                <button onClick={publishpost}>Publish</button>
+                </div>
+       
+
+                <hr className='divide'></hr>
+
+            </div>
+        </>
+        );
+    };
     return (
         <>
             <div className="overlay" onClick={onClose}></div>
