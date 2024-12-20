@@ -189,6 +189,8 @@ export const fetchUserPosts = async (userid) => {
 };
 
 export const updatePost = async (postid, post) => {
+    // post: {title: content: updating:...}
+    // need to fetch post content in order to update post
     const postdetails = await fetchPostDetails(postid);
     if (!postdetails) {
         console.log('could not fetch post details to update post');
@@ -204,7 +206,14 @@ export const updatePost = async (postid, post) => {
     }
 };
 
-
+export const createPost = async (post) => {
+    try {
+        const res = await axios.post(URL, post);
+        return res.data;
+    } catch (err) {
+        alert('could not create post at this time...');
+    }
+};
 
 const _publisheddata = [
     [1, 'Easy Bread Pudding Recipe', '2024-12-15', 'Active', '\u{1F4E6}'],

@@ -1,7 +1,7 @@
 import './dialog.css';
 import logo from '../logo.svg';
 
-function Dialog({ isvisible, onClose, postdetails }) {
+function Dialog({ isvisible, onClose, postdetails,isnewpost }) {
 
     if (!isvisible) return null;
     return (
@@ -36,13 +36,13 @@ function Dialog({ isvisible, onClose, postdetails }) {
                     {postdetails.replies && postdetails.replies.length > 0 ? (
                         <ul>
                             {postdetails.replies.map((reply, idx) => (
-                                <li key={idx}>
+                                <li key={idx} className='postreplies'>
                                     <p>{reply.comment}</p>
-                                    {/* <ul>
-                                        {reply.subreplies.map((subreply, subidx) => (
+                                    <ul>
+                                        {Array.isArray(reply.subreplies)&&reply.subreplies.map((subreply, subidx) => (
                                             <li key={subidx}>{subreply.comment}</li>
                                         ))}
-                                    </ul> */}
+                                    </ul>
                                 </li>
                             ))}
                         </ul>
