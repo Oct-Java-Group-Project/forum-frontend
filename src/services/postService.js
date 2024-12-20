@@ -2,8 +2,9 @@
 
 import axios from "axios";
 import { capitalize } from "../utils/helpers";
+import { useAuth } from "../contexts/AuthContext";
 
-const URL='http://localhost:8080/posts';
+const URL = 'http://localhost:8080/posts';
 export const fetchPosts = async () => {
     try {
         const res = await axios.get(URL);
@@ -72,7 +73,7 @@ export const fetchPosts = async () => {
 export const fetchPostDetails = async (postid) => {
     try {
         const res = await axios.get(`${URL}/${postid}`);
-        console.log('Post details response:', res.data);
+        // console.log('Post details response:', res.data);
 
         if (res.data.success) {
             const postData = res.data.data.post || res.data.data;
@@ -110,23 +111,82 @@ export const fetchPostDetails = async (postid) => {
         return null;
     }
 };
+export const fetchUserPosts = async (userid) => {
 
-export const updatePost = async(postid, post) => {
+    try {
+        const res = await axios.get(URL);
+
+        const posts = res.data.success ?
+            (Array.isArray(res.data.data) ? res.data.data : [res.data.data]) : [];
+
+        // title, date, status, archived
+        const publisheddata = posts.filter((post) => {
+            const postData = post.post || post;
+            // fetch user, published
+            return postData.userId === userid && postData.accessibility === 'PUBLISHED';
+        }).map((post) => {
+            const postData = post.post || post;
+            console.log('published user data',postData);
+            const createdat = postData.metadata ? new Date(postData.metadata.createdAt).toLocaleDateString() : '';
+            return [
+                postData.postId || '',
+                postData.title || '',
+                createdat,
+                postData.accessibility,
+                postData.archived,
+            ];
+        });
+        const draftdata = posts.filter((post) => {
+            const postData = post.post || post;
+            // fetch user, published
+            return postData.userId === userid && postData.accessibility === 'UNPUBLISHED';
+        }).map((post) => {
+            const postData = post.post || post;
+            const createdat = postData.metadata ? new Date(postData.metadata.createdAt).toLocaleDateString() : '';
+            return [
+                postData.postId || '',
+                postData.title || '',
+                createdat,
+                postData.accessibility,
+                postData.archived,
+            ];
+        });
+        return { publisheddata, draftdata };
+    } catch (err) {
+        // alert('we could not fetch your posts, please try again later...');
+        console.error('Error fetching posts:', err);
+        return { publisheddata: _publisheddata, draftdata: _draftdata };
+    }
+};
+
+export const updatePost = async (postid, post) => {
     const postdetails = await fetchPostDetails(postid);
-    if(!postdetails) {
+    if (!postdetails) {
         console.log('could not fetch post details to update post');
         return;
     }
     const postcontent = postdetails.content;
-    post = {...post, content: postcontent};
+    post = { ...post, content: postcontent };
 
     try {
         const res = await axios.put(`${URL}/${postid}`, post);
-    } catch(err) {
+    } catch (err) {
         alert('could not update post at this time...');
     }
 };
 
+const _publisheddata = [
+    [1, 'Easy Bread Pudding Recipe', '2024-12-15', 'Active', '\u{1F4E6}'],
+    [2, 'Zwilling Chopsticks', '2024-12-33', 'Active', '\u{1F4E6}'],
+    [3, 'Staub Macaroon Dinnerware', '2000-12-12', 'Inactive', '\u{1F4E6}'],
+    [4, 'Holiday Treats', '2020-12-12', 'Inactive', '\u{1F4E6}'],
+];
+const _draftdata = [
+    [1, 'Easy Bread Pudding Recipe', '2024-12-15'],
+    [2, 'Zwilling Chopsticks', '2024-12-33'],
+    [3, 'Staub Macaroon Dinnerware', '2000-12-12'],
+    [4, 'Holiday Treats', '2020-12-12'],
+];
 // Example test data - commented out for production
 /*
 const _data = [
