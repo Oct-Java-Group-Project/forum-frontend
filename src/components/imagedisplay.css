@@ -1,0 +1,8 @@
+.profimgheader{
+    font-size: medium;
+    color: var(--primary-color);
+}
+.imgcontainer{
+    display: flex;
+    flex-direction: column;
+}

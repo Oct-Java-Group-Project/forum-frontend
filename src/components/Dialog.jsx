@@ -1,9 +1,53 @@
 import './dialog.css';
 import logo from '../logo.svg';
+import { useState } from 'react';
 
-function Dialog({ isvisible, onClose, postdetails,isnewpost }) {
+// postdetails: for displaying post details
+// isnewpost,onPostSubmit: for creating new posts
+function Dialog({ isvisible, onClose, postdetails,isnewpost,onPostSubmit}) {
 
     if (!isvisible) return null;
+    // const inittitle='';
+    // const initcontent='';
+    // const [title,settitle]=useState(inittitle);
+    // const [content,setcontent]=useState(initcontent);
+    if(isnewpost){
+
+        // const publishpost=()=>{
+        //     onPostSubmit({title,content});;
+        //     onClose();
+        // };
+
+        // return(
+        //     <>
+        //     <div className="overlay" onClick={onClose}></div>
+        //     <div className="dialog">
+        //         <button className="exit" onClick={onClose}>X</button>
+
+        //         <div className='dialogheader'>
+        //                 <input type='text' placeholder='Title' value={title} onChange={(e)=>settitle(e.target.value)}/>
+  
+        //             <hr className='divide'></hr>
+                    
+        //         </div>
+
+        //         <div className='dialoginfo'>
+        //             <img src={logo} className="App-logo" alt="logo" id='dialogprofileimg' />
+        //             <p>Author: {postdetails.author}</p>
+        //             <p>Created: {postdetails.createdat}</p>
+        //             <p>Updated: {postdetails.updatedat}</p>
+        //         </div>
+        //         {/* <hr className='divide'></hr> */}
+        //         <div className='dialogcontent-wrapper'>
+        //         <textarea className="dialogcontent" placeholder='Content' value={content} onChange={(e)=>setcontent(e.target.value)}/>
+        //         </div>
+
+        //         <hr className='divide'></hr>
+
+        //     </div>
+        // </>
+        // );
+    };
     return (
         <>
             <div className="overlay" onClick={onClose}></div>
