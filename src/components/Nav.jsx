@@ -28,8 +28,8 @@ function Nav() {
                                className={activetab === 'Posts' ? 'activetab' : ''}>Posts</a>
                             <a onClick={() => onTab('Users', '/users')}
                                className={activetab === 'Users' ? 'activetab' : ''}>Users</a>
-                            <a onClick={() => onTab('History', '/history')}
-                               className={activetab === 'History' ? 'activetab' : ''}>History</a>
+                            {/* <a onClick={() => onTab('History', '/history')}
+                               className={activetab === 'History' ? 'activetab' : ''}>History</a> */}
                             <a onClick={() => onTab('Messages', '/messages')}>Messages</a>
 
                         </>
@@ -37,8 +37,8 @@ function Nav() {
                         <>
                             <a onClick={() => onTab('Home', '/home')}
                                className={activetab === 'Home' ? 'activetab' : ''}>Home</a>
-                            <a onClick={() => onTab('History', '/history')}
-                               className={activetab === 'History' ? 'activetab' : ''}>History</a>
+                            {/* <a onClick={() => onTab('History', '/history')}
+                               className={activetab === 'History' ? 'activetab' : ''}>History</a> */}
                             <a onClick={() => onTab('Profile', '/profile')}
                                className={activetab === 'Profile' ? 'activetab' : ''}>Profile</a>
                             <a onClick={() => onTab('Contact Us', '/contactus')}
