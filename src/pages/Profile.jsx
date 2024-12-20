@@ -18,11 +18,15 @@ function Profile() {
     // get user posts
     const [publisheddata,setpublisheddata]=useState([]);
     const [draftdata,setdraftdata]=useState([]);
+    const [hiddendata,sethiddendata]=useState([]);
+    const [archiveddata,setarchiveddata]=useState([]);
     useEffect(()=>{
         const getUserPosts=async()=>{
-            const {publisheddata,draftdata}=await fetchUserPosts(authstate.user.userid);
+            const {publisheddata,draftdata,hiddendata,archiveddata}=await fetchUserPosts(authstate.user.userid);
             setpublisheddata(publisheddata);
             setdraftdata(draftdata);
+            sethiddendata(hiddendata);
+            setarchiveddata(archiveddata);
         };
         getUserPosts();
     },[]);
@@ -30,6 +34,8 @@ function Profile() {
         switch (activetab) {
             case 'Published':setactivetabdata(publisheddata);break;
             case 'Drafts':setactivetabdata(draftdata);break;
+            case 'Hidden':setactivetabdata(hiddendata);break;
+            case 'Archived':setactivetabdata(archiveddata);break;
             default: setactivetabdata(publisheddata);break;
         }
     }
@@ -38,33 +44,17 @@ function Profile() {
         setTabData();
     }, [activetab]);
 
-    // if (!authstate.isauthenticated) {
-    //     return <Navigate to="/" />
-    // }
-
 
     const tabs = ['Published', 'Drafts', 'Hidden', 'Archived','History'];
     const publishedheaders = ['ID','Title', 'Date', 'Status', '\u{1F4E6}'];
     const draftheaders = ['ID','Title', 'Date'];
 
-
-    // const publisheddata = [
-    //     [1,'Easy Bread Pudding Recipe', '2024-12-15', 'Active', '\u{1F4E6}'],
-    //     [2,'Zwilling Chopsticks', '2024-12-33', 'Active', '\u{1F4E6}'],
-    //     [3,'Staub Macaroon Dinnerware', '2000-12-12', 'Inactive', '\u{1F4E6}'],
-    //     [4,'Holiday Treats', '2020-12-12', 'Inactive', '\u{1F4E6}'],
-    // ];
-    // const draftdata = [
-    //     [1,'Easy Bread Pudding Recipe', '2024-12-15'],
-    //     [2,'Zwilling Chopsticks', '2024-12-33'],
-    //     [3,'Staub Macaroon Dinnerware', '2000-12-12'],
-    //     [4,'Holiday Treats', '2020-12-12'],
-    // ];
-
     const getTabHeaders = () => {
         switch (activetab) {
             case 'Published': return publishedheaders;
             case 'Drafts': return draftheaders;
+            case 'Hidden': return draftheaders;
+            case 'Archived': return draftheaders;
             default: return publishedheaders;
         }
     }

@@ -133,7 +133,7 @@ export const fetchUserPosts = async (userid) => {
                 postData.title || '',
                 createdat,
                 postData.accessibility,
-                postData.archived,
+                postData.archived?'Archived':'Active',
             ];
         });
         const draftdata = posts.filter((post) => {
@@ -147,15 +147,39 @@ export const fetchUserPosts = async (userid) => {
                 postData.postId || '',
                 postData.title || '',
                 createdat,
-                postData.accessibility,
-                postData.archived,
             ];
         });
-        return { publisheddata, draftdata };
+        const hiddendata = posts.filter((post) => {
+            const postData = post.post || post;
+            // fetch user, published
+            return postData.userId === userid && postData.accessibility === 'HIDDEN';
+        }).map((post) => {
+            const postData = post.post || post;
+            const createdat = postData.metadata ? new Date(postData.metadata.createdAt).toLocaleDateString() : '';
+            return [
+                postData.postId || '',
+                postData.title || '',
+                createdat,
+            ];
+        });
+        const archiveddata = posts.filter((post) => {
+            const postData = post.post || post;
+            // fetch user, published
+            return postData.userId === userid && postData?.archived===true;
+        }).map((post) => {
+            const postData = post.post || post;
+            const createdat = postData.metadata ? new Date(postData.metadata.createdAt).toLocaleDateString() : '';
+            return [
+                postData.postId || '',
+                postData.title || '',
+                createdat,
+            ];
+        });
+        return { publisheddata, draftdata,hiddendata,archiveddata };
     } catch (err) {
         // alert('we could not fetch your posts, please try again later...');
         console.error('Error fetching posts:', err);
-        return { publisheddata: _publisheddata, draftdata: _draftdata };
+        return { publisheddata: _publisheddata, draftdata: _draftdata ,hiddendata:_draftdata,archiveddata:_draftdata};
     }
 };
 
