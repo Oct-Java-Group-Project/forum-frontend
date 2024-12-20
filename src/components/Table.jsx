@@ -209,9 +209,9 @@ function Table({ headers, initdata, activetab }) {
             
             setnewpost({
                 title: newpostdata.title,
+                content: newpostdata.content,
                 userId: authstate.user.userid,
                 createdAt: new Date(),
-                accessibility: newpostdata.accessibility,
             });
             setnewdialog(false);
             await createPost(newpost);

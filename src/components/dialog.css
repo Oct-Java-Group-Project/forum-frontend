@@ -39,6 +39,17 @@
     justify-content: center;
     flex-direction: column;
 }
+.dialogheaderinput{
+    min-width: 500px;
+}
+.dialogheaderinput input{
+    width: 800px;
+    font-size: medium;
+}
+.dialogcontentinput{
+    width: 800px;
+    font-size: medium;
+}
 
 .dialogdescription{
     display: flex;
