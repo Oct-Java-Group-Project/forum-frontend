@@ -6,6 +6,7 @@ import Nav from '../components/Nav';
 import { useEffect, useState } from 'react';
 import { fetchPosts } from "../services/postService";
 import { FileUpload } from "../services/fileService";
+import {ImageDisplay} from "../components/ImageDisplay";
 
 function Home() {
     const { authstate } = useAuth();
@@ -66,6 +67,7 @@ function Home() {
 
                 <div className="stats">
                     <h3>Welcome, {authstate.user.firstname} {authstate.user.lastname}</h3>
+                    <ImageDisplay profileImgUrl={authstate.user.profileimg} />
                 </div>
                 {/*<div>*/}
                 {/*    <FileUpload/>*/}
