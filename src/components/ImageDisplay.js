@@ -27,8 +27,7 @@ export const ImageDisplay = ({ profileImgUrl }) => {
     }, [profileImgUrl]);
 
     return (
-        <div  className='imgcontainer' style={{ padding: "20px", maxWidth: "400px", margin: "auto" }}>
-            <h3 className="profimgheader">Profile Image</h3>
+        <div  className='imgcontainer' style={{ padding: "10px", maxWidth: "120px" }}>
             {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
             {imageSrc && (
                 <div style={{ marginTop: "20px" }}>
