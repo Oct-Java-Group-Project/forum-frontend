@@ -1,3 +1,4 @@
+/* Background Animation */
 @keyframes gradient-animation {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -17,14 +18,41 @@
     overflow: hidden;
 }
 
+/* Center the form container */
+.formcontainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+}
+
+/* Form Card Styling */
 .card {
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-    background: rgba(0, 0, 0, 0.8);
+    width: 100%;
+    max-width: 400px; /* Restrict form width */
+    margin: 0 auto; /* Center horizontally */
     padding: 2em;
     border-radius: 0.5em;
+    background-color: rgba(0, 0, 0, 0.8); /* Dark semi-transparent */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+}
+
+/* Input Fields with Subtle Interaction */
+input, textarea {
+    background-color: #2e2e2e;
     color: #f0f0f0;
+    border: 1px solid #444;
+    padding: 0.7em;
+    border-radius: 0.3em;
+    outline: none;
+    width: 100%;
+    margin-bottom: 1em;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus, textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 8px var(--primary-color);
 }
 
 /* Buttons with Modern Hover Effect */
@@ -38,6 +66,8 @@ button {
     border: none;
     border-radius: 0.3em;
     transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 1em;
 }
 
 button::before {
@@ -60,22 +90,6 @@ button:hover::before {
     left: 100%;
 }
 
-/* Input Fields with Subtle Interaction */
-input, textarea {
-    background-color: #2e2e2e;
-    color: #f0f0f0;
-    border: 1px solid #444;
-    padding: 0.7em;
-    border-radius: 0.3em;
-    outline: none;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-input:focus, textarea:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 8px var(--primary-color);
-}
-
 /* Subtle Heading Animation for Elegance */
 @keyframes fade-in {
     0% { opacity: 0; transform: translateY(-20px); }
@@ -91,14 +105,37 @@ h3 {
 }
 
 /* Links with Underline Hover Effect */
+.links {
+    text-align: center;
+    margin-top: 1em;
+}
+
 .links > * {
     position: relative;
     font-size: 0.9em;
     color: var(--primary-color);
+    margin: 0 0.5em;
+    transition: color 0.3s ease;
 }
 
 .links > *:hover {
     color: var(--secondary-color);
     text-decoration: underline;
 }
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .card {
+        padding: 1.5em;
+    }
+
+    .card h3 {
+        font-size: 1.5em;
+    }
+
+    .links > * {
+        font-size: 0.8em;
+    }
+}
+
 
