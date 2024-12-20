@@ -204,16 +204,16 @@ function Table({ headers, initdata, activetab }) {
             console.error('Error fetching post details:', err);
         }
     };
-    const onNewPost = async () => {
+    const onNewPost = async (newpostdata) => {
         try {
             
             setnewpost({
-                title: '',
+                title: newpostdata.title,
                 userId: authstate.user.userid,
                 createdAt: new Date(),
-                accessibility: 'PUBLIC',
+                accessibility: newpostdata.accessibility,
             });
-            setnewdialog(true);
+            setnewdialog(false);
             await createPost(newpost);
 
         } catch (err) {
@@ -229,9 +229,9 @@ function Table({ headers, initdata, activetab }) {
                 </p>
                 {!authstate.user.isadmin && location.pathname === '/home' &&
                     <>
-                        <p onClick={onNewPost} id="addpost">+</p>
+                        <p id="addpost" onClick={()=>setnewdialog(true)}>+</p>
                         {
-                            <Dialog isvisible={newdialog} onClose={() => setnewdialog(false)} postdetails={newpost} isnewpost={true}/>
+                        <Dialog isvisible={newdialog} onClose={() => setnewdialog(false)} postdetails={newpost} isnewpost={true} onPostSubmit={onNewPost}/>
                         }
                     </>
                 }

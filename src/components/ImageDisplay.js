@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { displayFile } from "../services/downloadFile";
-
+import './imagedisplay.css';
 export const ImageDisplay = ({ profileImgUrl }) => {
     const [imageSrc, setImageSrc] = useState(null); // Blob URL for the image
     const [errorMessage, setErrorMessage] = useState("");
@@ -27,8 +27,8 @@ export const ImageDisplay = ({ profileImgUrl }) => {
     }, [profileImgUrl]);
 
     return (
-        <div style={{ padding: "20px", maxWidth: "400px", margin: "auto" }}>
-            <h2>Profile Image</h2>
+        <div  className='imgcontainer' style={{ padding: "20px", maxWidth: "400px", margin: "auto" }}>
+            <h3 className="profimgheader">Profile Image</h3>
             {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
             {imageSrc && (
                 <div style={{ marginTop: "20px" }}>
